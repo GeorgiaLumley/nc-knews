@@ -11,3 +11,5 @@ exports.down = function(knex, Promise) {
   console.log("removing usersTable");
   return knex.schema.dropTable("usersTable");
 };
+
+//to get this typu in the terminal npm run migrate:make create_(name of table)
