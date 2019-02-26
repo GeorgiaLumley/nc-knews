@@ -8,8 +8,8 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-  console.log("removing usersTable");
-  return knex.schema.dropTable("usersTable");
+  console.log("removing users");
+  return knex.schema.dropTable("users");
 };
 
 //to get this typu in the terminal npm run migrate:make create_(name of table)

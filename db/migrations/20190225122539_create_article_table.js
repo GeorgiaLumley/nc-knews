@@ -1,10 +1,10 @@
 exports.up = function(knex, Promise) {
   console.log("creating articleTable");
   return knex.schema.createTable("article", articleTable => {
-    articleTable.string("article_id").primary();
+    articleTable.increments("article_id").primary();
     articleTable.string("title");
-    articleTable.string("body");
-    articleTable.integer("vote").defaultTo(0);
+    articleTable.string("body", 2000);
+    articleTable.integer("votes").defaultTo(0);
     articleTable
       .string("topic")
       .references("slug")
@@ -13,7 +13,7 @@ exports.up = function(knex, Promise) {
       .string("author")
       .references("username")
       .inTable("users");
-    articleTable.timestamp("created_at").defaultTo(knex.fn.now());
+    articleTable.date("created_at").defaultTo(knex.fn.now());
   });
 };
 

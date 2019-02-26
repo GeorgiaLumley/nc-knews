@@ -7,11 +7,11 @@ exports.up = function(knex, Promise) {
       .references("username")
       .inTable("users");
     commentsTable
-      .interger("article_id")
+      .integer("article_id")
       .references("article_id")
       .inTable("article");
-    commentsTable.interger("votes").defaultTo(0);
-    commentsTable.timestamp("created_at").defaultTo(knex.fn.now());
+    commentsTable.integer("votes").defaultTo(0);
+    commentsTable.datetime("created_at").defaultTo(knex.fn.now());
     commentsTable.string("body");
   });
 };
