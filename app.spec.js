@@ -21,5 +21,14 @@ describe('/', () => {
           );
         }));
     });
+    describe('/username', () => {
+      it('GET status:200, get user by username', () => request
+        .get('/api/users/rogersop')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.user).to.be.an('object');
+          expect(res.body.user.name).to.equal('paul');
+        }));
+    });
   });
 });
