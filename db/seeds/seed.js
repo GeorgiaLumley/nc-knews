@@ -1,31 +1,49 @@
-const { userData, topicData, articleData, commentData } = require("../data");
-const { properDate } = require("../../utils");
+const {
+  userData, topicData, articleData, commentData,
+} = require('../data');
+const {
+  formattedArticles,
+  correctComments,
+  getArticleIds,
+} = require('../../utils');
 
-exports.seed = function(knex, Promise) {
+exports.seed = function (knex, Promise) {
   return knex.migrate
     .rollback()
     .then(() => knex.migrate.latest())
-    .then(() =>
-      knex("users")
+    .then(() => Promise.all([
+      knex('users')
         .insert(userData)
-        .returning("*")
-    )
-    .then(() =>
-      knex("topics")
-        .insert(topicData)
-        .returning("*")
-    )
-    .then(() => {
-      const correctDate = properDate(articleData);
-      return knex("article")
-        .insert(correctDate)
-        .returning("*");
-    })
-    .then(articalRows => {
-      const correctCommentDate = properDate(commentData);
+        .returning('*'),
 
-      knex("comments")
-        .insert(correctCommentDate)
-        .returning("*");
+      knex('topics')
+        .insert(topicData)
+        .returning('*'),
+    ]))
+    .then(([userRows, topicRows]) => {
+      const formatArticles = formattedArticles(articleData);
+      return Promise.all([
+        userRows,
+        topicRows,
+        knex('article')
+          .insert(formatArticles)
+          .returning('*'),
+      ])
+        .then(([userRows, topicRows, articleRows]) => {
+          const formatArticlesList = getArticleIds(articleRows);
+          const formattedComments = correctComments(
+            commentData,
+            formatArticlesList,
+          );
+          return Promise.all([
+            userRows,
+            topicRows,
+            articleRows,
+            knex('comments')
+              .insert(formattedComments)
+              .returning('*'),
+          ]);
+        })
+        .catch(error => console.log(error));
     });
 };
