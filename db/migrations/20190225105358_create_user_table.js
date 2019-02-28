@@ -12,4 +12,4 @@ exports.down = function (knex, Promise) {
   return knex.schema.dropTable('users');
 };
 
-// to get this typu in the terminal npm run migrate:make create_(name of table)
+// to get this type in the terminal npm run migrate:make create_(name of table)
