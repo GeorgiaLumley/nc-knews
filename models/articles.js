@@ -1,6 +1,8 @@
 const connection = require('../db/connection');
 
-exports.getArticles = () => connection('article').select('*');
+exports.getArticles = (author = '*') => connection('article')
+  .select('*')
+  .where(author);
 
 exports.addNewArticle = obj => connection('article')
   .insert(obj)
