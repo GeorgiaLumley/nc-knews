@@ -16,11 +16,12 @@ articlesRouter
 articlesRouter
   .route('/:article_id')
   .get(sendArticleById)
-  .delete(deleteArticle);
+  .delete(deleteArticle).patch()
 
 articlesRouter
   .route('/:article_id/comments')
   .get(sendArticleComments)
   .post(postNewComment);
+
 
 module.exports = articlesRouter;

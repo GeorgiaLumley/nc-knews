@@ -46,9 +46,18 @@ const correctComments = (comments, articlesRows) => {
   return formattedComments;
 };
 
+const formatArticleQuery = (query) => {
+  const obj = {};
+  if (query.author !== undefined) obj.author = query.author;
+  if (query.topic !== undefined) obj.topic = query.topic;
+
+  return obj;
+};
+
 module.exports = {
   formattedArticles,
   getArticleIds,
   correctComments,
   getArticleId,
+  formatArticleQuery,
 };

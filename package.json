@@ -10,9 +10,11 @@
     "migrate-rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
     "test": "mocha ./app.spec.js ",
+    "test-util": "mocha ./utils/test.spec.js",
     "lint": "eslint ./ --fix",
     "pre-commit": "npm t",
-    "posttest": "npm run lint"
+    "posttest": "npm run lint",
+    "dev": "nodemon run listen.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,7 @@
     "express": "^4.16.4",
     "knex": "^0.15.2",
     "mocha": "^6.0.2",
+    "nodemon": "^1.18.10",
     "pg": "^7.8.1",
     "supertest": "^3.4.2"
   },

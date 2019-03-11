@@ -6,17 +6,16 @@ const {
   getArticleComments,
   addNewComment,
 } = require('../models/articles');
+const { formatArticleQuery } = require('../utils/index');
 
 exports.sendArticles = (req, res, next) => {
-  const author = req.query;
-  console.log(author);
-  getArticles(author)
-    .then((articles) => {
-      res.status(200).send({ articles });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const sortBy = req.query.sortBy;
+  const orderBy = req.query.orderBy;
+  const limit = req.query.limit;
+  const query = formatArticleQuery(req.query);
+  getArticles(query, sortBy, orderBy, limit).then((articles) => {
+    res.status(200).send({ articles });
+  });
 };
 
 exports.postArticles = (req, res, next) => {
