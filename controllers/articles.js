@@ -5,6 +5,7 @@ const {
   removeArticle,
   getArticleComments,
   addNewComment,
+  updateVotes,
 } = require('../models/articles');
 const { formatArticleQuery } = require('../utils/index');
 
@@ -61,5 +62,14 @@ exports.postNewComment = (req, res, next) => {
   const newComment = req.body;
   addNewComment(newComment).then((comment) => {
     res.status(201).send({ comment });
+  });
+};
+
+exports.updateArticleVotes = (req, res, next) => {
+  const incVote = req.body;
+  console.log(incVote);
+  const { article_id } = req.params;
+  updateVotes(article_id, incVote).then((updateVotes) => {
+    res.status(201).send({ updateVotes });
   });
 };

@@ -1,36 +1,35 @@
-process.env.NODE_ENV = "test";
-const { expect } = require("chai");
-const app = require("./app");
-const connection = require("./db/connection");
-const request = require("supertest")(app);
+process.env.NODE_ENV = 'test';
+const { expect } = require('chai');
+const app = require('./app');
+const connection = require('./db/connection');
+const request = require('supertest')(app);
 
-describe("/", () => {
+describe('/', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
-  describe("/api", () => {
-    describe("/users", () => {
-      it("GET status:200, gives the users table", () =>
-        request
-          .get("/api/users")
-          .expect(200)
-          .then(res => {
-            expect(res.body.users).to.be.an("array");
-            expect(res.body.users[0]).to.contain.keys(
-              "username",
-              "avatar_url",
-              "name"
-            );
-          }));
+  describe('/api', () => {
+    describe('/users', () => {
+      it('GET status:200, gives the users table', () => request
+        .get('/api/users')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.users).to.be.an('array');
+          expect(res.body.users[0]).to.contain.keys(
+            'username',
+            'avatar_url',
+            'name',
+          );
+        }));
     });
-    it("POST status:201, adds new user", () => {
+    it('POST status:201, adds new user', () => {
       const userToAdd = {
-        username: "GeorgiaLumley",
+        username: 'GeorgiaLumley',
         avatar_url:
-          "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
-        name: "Georgia Lumley"
+          'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4',
+        name: 'Georgia Lumley',
       };
       return request
-        .post("/api/users")
+        .post('/api/users')
         .send(userToAdd)
         .expect(201)
         .then(({ body }) => {
@@ -38,32 +37,30 @@ describe("/", () => {
         });
     });
   });
-  describe("/username", () => {
-    it("GET status:200, get user by username", () =>
-      request
-        .get("/api/users/rogersop")
-        .expect(200)
-        .then(res => {
-          expect(res.body.user).to.be.an("object");
-          expect(res.body.user.name).to.equal("paul");
-        }));
+  describe('/username', () => {
+    it('GET status:200, get user by username', () => request
+      .get('/api/users/rogersop')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.user).to.be.an('object');
+        expect(res.body.user.name).to.equal('paul');
+      }));
   });
-  describe("/topic", () => {
-    it("GET status:200, returns all the topics", () =>
-      request
-        .get("/api/topics")
-        .expect(200)
-        .then(res => {
-          expect(res.body.topics).to.be.an("array");
-          expect(res.body.topics[0]).to.contain.keys("slug", "description");
-        }));
-    it("POST status:201, adds new topic", () => {
+  describe('/topic', () => {
+    it('GET status:200, returns all the topics', () => request
+      .get('/api/topics')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.topics).to.be.an('array');
+        expect(res.body.topics[0]).to.contain.keys('slug', 'description');
+      }));
+    it('POST status:201, adds new topic', () => {
       const topicToAdd = {
-        slug: "coding",
-        description: "it's hard"
+        slug: 'coding',
+        description: "it's hard",
       };
       return request
-        .post("/api/topics")
+        .post('/api/topics')
         .send(topicToAdd)
         .expect(201)
         .then(({ body }) => {
@@ -72,123 +69,118 @@ describe("/", () => {
     });
   });
 
-  describe("/articles", () => {
-    it("GET status:200, returns all the articles", () =>
-      request
-        .get("/api/articles")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles).to.be.an("array");
-          expect(res.body.articles[0]).to.contain.keys(
-            "article_id",
-            "title",
-            "body",
-            "votes",
-            "topic",
-            "author",
-            "created_at"
-          );
-        }));
-    it("POST status:201, adds new article", () => {
+  describe('/articles', () => {
+    it('GET status:200, returns all the articles', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).to.be.an('array');
+        expect(res.body.articles[0]).to.contain.keys(
+          'article_id',
+          'title',
+          'body',
+          'votes',
+          'topic',
+          'author',
+          'created_at',
+        );
+      }));
+    it('POST status:201, adds new article', () => {
       const articlesToAdd = {
-        title: "test",
-        body: "this is a test",
+        title: 'test',
+        body: 'this is a test',
         votes: 5,
-        topic: "mitch",
-        author: "butter_bridge"
+        topic: 'mitch',
+        author: 'butter_bridge',
       };
       return request
-        .post("/api/articles")
+        .post('/api/articles')
         .send(articlesToAdd)
         .expect(201)
         .then(({ body }) => {
           expect(body.article[0].title).to.equal(articlesToAdd.title);
         });
     });
-    it("QUERY takes a query of author", () =>
-      request
-        .get("/api/articles?author=butter_bridge")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles).to.have.length(3);
-        }));
-    it("QUERY takes a query of topic", () =>
-      request
-        .get("/api/articles?topic=cats")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles).to.have.length(1);
-        }));
-    it("GET status:200 serves up default sort_by of articles in ascending order by date", () =>
-      request
-        .get("/api/articles")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles[0].title).to.eql(
-            "Living in the shadow of a great man"
-          );
-        }));
-    it("GET status:200 serves up sort_by of articles  by title in ascending order by date", () =>
-      request
-        .get("/api/articles?sortBy=title")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles[0].title).to.eql("Z");
-        }));
-    it("GET status:200 serves up sort_by of articles  by title in descending order by date", () =>
-      request
-        .get("/api/articles?sortBy=title&&orderBy=asc")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles[0].title).to.eql("A");
-        }));
-    it("QUERY status:200 sets a default limit of 10", () =>
-      request
-        .get("/api/articles")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles).to.have.length(10);
-        }));
-    it("QUERY status:200 sets a limit of 5", () =>
-      request
-        .get("/api/articles?limit=5")
-        .expect(200)
-        .then(res => {
-          expect(res.body.articles).to.have.length(5);
-        }));
+    it('QUERY takes a query of author', () => request
+      .get('/api/articles?author=butter_bridge')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).to.have.length(3);
+      }));
+    it('QUERY takes a query of topic', () => request
+      .get('/api/articles?topic=cats')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).to.have.length(1);
+      }));
+    it('GET status:200 serves up default sort_by of articles in ascending order by date', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].title).to.eql(
+          'Living in the shadow of a great man',
+        );
+      }));
+    it('GET status:200 serves up sort_by of articles  by title in ascending order by date', () => request
+      .get('/api/articles?sortBy=title')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].title).to.eql('Z');
+      }));
+    it('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
+      .get('/api/articles?sortBy=title&&orderBy=asc')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].title).to.eql('A');
+      }));
+    it('QUERY status:200 sets a default limit of 10', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).to.have.length(10);
+      }));
+    it('QUERY status:200 sets a limit of 5', () => request
+      .get('/api/articles?limit=5')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).to.have.length(5);
+      }));
 
-    describe("/article_id", () => {
-      it("GET status:200, get article by article_id", () =>
-        request
-          .get("/api/articles/7")
-          .expect(200)
-          .then(res => {
-            expect(res.body.article).to.be.an("object");
-            expect(res.body.article.title).to.equal("Z");
-          }));
-      it("PATCH status:201 updates the votes", () => {
-        return request.get("/api/articles/7").expect(200).then(res => {
-          expect(res.body.article.votes).to.eql(1)
-        })
+    describe('/article_id', () => {
+      it('GET status:200, get article by article_id', () => request
+        .get('/api/articles/7')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.article).to.be.an('object');
+          expect(res.body.article.title).to.equal('Z');
+        }));
+      it.only('PATCH status:201 updates the votes', () => {
+        const incVotes = { incVotes: 1 };
+        return request
+          .patch('/api/articles/7')
+          .send(incVotes)
+          .expect(201)
+          .then((res) => {
+            console.log(res.body);
+            expect(res.body.updateVotes).to.eql(1);
+          });
       });
-      it("DELETE status:204, deletes article by its id", () =>
-        request.delete("/api/articles/7").expect(204));
+      it('DELETE status:204, deletes article by its id', () => request.delete('/api/articles/7').expect(204));
     });
-    describe("/comments", () => {
-      it("GET status 200, return all comments associated with the article", () =>
-        request
-          .get("/api/articles/9/comments")
-          .expect(200)
-          .then(res => {
-            expect(res.body.comments).to.be.an("array");
-          }));
-      it("POST status:201, add now comment", () => {
+    describe('/comments', () => {
+      it('GET status 200, return all comments associated with the article', () => request
+        .get('/api/articles/9/comments')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments).to.be.an('array');
+        }));
+      it('POST status:201, add now comment', () => {
         const commentToAdd = {
-          author: "icellusedkars",
-          body: "this is a test"
+          author: 'icellusedkars',
+          body: 'this is a test',
         };
         return request
-          .post("/api/articles/9/comments")
+          .post('/api/articles/9/comments')
           .send(commentToAdd)
           .expect(201)
           .then(({ body }) => {
@@ -197,8 +189,8 @@ describe("/", () => {
       });
     });
   });
-  describe("/comments", () => {
-    describe("/comment_id", () => {
+  describe('/comments', () => {
+    describe('/comment_id', () => {
       // it('PATCH status:200, updated comment votes', () => {
       //   const update = {
       //     votes: 10,

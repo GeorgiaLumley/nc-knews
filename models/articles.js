@@ -23,3 +23,7 @@ exports.getArticleComments = article_id => connection('comments').where('article
 exports.addNewComment = newComment => connection('comments')
   .insert(newComment)
   .returning('*');
+
+exports.updateVotes = (id, incVote) => connection('article')
+  .increment('votes', incVote)
+  .where('article_id', id);
