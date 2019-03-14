@@ -46,12 +46,72 @@ const correctComments = (comments, articlesRows) => {
   return formattedComments;
 };
 
-const formatArticleQuery = (query) => {
-  const obj = {};
-  if (query.author !== undefined) obj.author = query.author;
-  if (query.topic !== undefined) obj.topic = query.topic;
+const authors = ['butter_bridge', 'icellusedkars', 'rogersop'];
+const topics = ['mitch', 'cats'];
 
-  return obj;
+const formatArticleQuery = (query) => {
+  if (
+    (authors.includes(query.author) || query.author === undefined)
+    && (topics.includes(query.topic) || query.topic === undefined)
+  ) {
+    const obj = {};
+    if (query.author !== undefined) obj.author = query.author;
+    if (query.topic !== undefined) obj.topic = query.topic;
+
+    return obj;
+  }
+  return 'err';
+};
+
+const db = [
+  { slug: 'mitch', description: 'tho man, the mitch, the legend' },
+  { slug: 'cats', decription: 'not dogs' },
+];
+
+const validateSlug = (obj) => {
+  for (let i = 0; i < db.length; i++) {
+    if (db[i].slug === obj.slug) return 'err';
+  }
+  return 'fine';
+};
+
+const columns = [
+  'article_id',
+  'title',
+  'body',
+  'votes',
+  'topic',
+  'author',
+  'created_at',
+];
+const correctQuerySortBy = (sort_by) => {
+  if (sort_by === undefined) return 'fine';
+  if (columns.includes(sort_by)) {
+    return 'fine';
+  }
+  return 'err';
+};
+
+const correctQueryOrder = (order) => {
+  if (order === undefined) return 'fine';
+  if (order === 'asc' || order === 'desc') {
+    return 'fine';
+  }
+  return 'err';
+};
+
+const validatePost = (body) => {
+  const articleKeys = ['title', 'body', 'votes', 'topic', 'author'];
+  const keys = Object.keys(body);
+  if (articleKeys.length !== keys.length) return 'err';
+  const orderedArticleKeys = articleKeys.sort();
+  const orderedKeys = keys.sort();
+  for (let i = 0; i < orderedArticleKeys.length; i++) {
+    if (orderedArticleKeys[i] !== orderedKeys[i]) {
+      return 'err';
+    }
+    return 'fine';
+  }
 };
 
 module.exports = {
@@ -60,4 +120,8 @@ module.exports = {
   correctComments,
   getArticleId,
   formatArticleQuery,
+  validateSlug,
+  correctQuerySortBy,
+  correctQueryOrder,
+  validatePost,
 };

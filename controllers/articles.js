@@ -6,20 +6,38 @@ const {
   getArticleComments,
   addNewComment,
   updateVotes,
+  decrementVotes,
 } = require('../models/articles');
-const { formatArticleQuery } = require('../utils/index');
+const {
+  formatArticleQuery,
+  correctQuerySortBy,
+  correctQueryOrder,
+  validatePost,
+} = require('../utils/index');
 
 exports.sendArticles = (req, res, next) => {
-  const sortBy = req.query.sortBy;
-  const orderBy = req.query.orderBy;
-  const limit = req.query.limit;
+  const { sort_by, order, limit } = req.query;
+  const correctQureySort = correctQuerySortBy(req.query.sort_by);
+  const queryOrder = correctQueryOrder(req.query.order);
   const query = formatArticleQuery(req.query);
-  getArticles(query, sortBy, orderBy, limit).then((articles) => {
-    res.status(200).send({ articles });
-  });
+  if (correctQureySort === 'err' || queryOrder === 'err' || query === 'err') {
+    next({ status: 400, msg: 'Bad Request' });
+  } else {
+    getArticles(query, sort_by, order, limit)
+      .then((articles) => {
+        res.status(200).send({ articles });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 
 exports.postArticles = (req, res, next) => {
+  const correctPost = validatePost(req.body);
+  if (correctPost === 'err') {
+    next({ status: 400, msg: 'Bad Request' });
+  }
   addNewArticle(req.body)
     .then((article) => {
       res.status(201).send({ article });
@@ -52,24 +70,46 @@ exports.deleteArticle = (req, res, next) => {
 };
 
 exports.sendArticleComments = (req, res, next) => {
+  const { sort_by, order, limit } = req.query;
   const { article_id } = req.params;
-  getArticleComments(article_id).then((comments) => {
-    res.status(200).send({ comments });
-  });
+  getArticleComments(article_id, order, sort_by, limit)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.postNewComment = (req, res, next) => {
   const newComment = req.body;
-  addNewComment(newComment).then((comment) => {
-    res.status(201).send({ comment });
-  });
+  addNewComment(newComment)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.updateArticleVotes = (req, res, next) => {
   const incVote = req.body;
-  console.log(incVote);
   const { article_id } = req.params;
-  updateVotes(article_id, incVote).then((updateVotes) => {
-    res.status(201).send({ updateVotes });
-  });
+  if (incVote.incVotes > 0) {
+    updateVotes(article_id, incVote)
+      .then((updateVotes) => {
+        res.status(201).send({ updateVotes });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    decrementVotes(article_id, incVote)
+      .then((updateVotes) => {
+        res.status(201).send({ updateVotes });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 };

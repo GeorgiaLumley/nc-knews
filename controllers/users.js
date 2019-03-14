@@ -24,9 +24,12 @@ exports.sendUserByUsername = (req, res, next) => {
   const singleUsername = req.params.username;
   getUserByUsername(singleUsername)
     .then(([user]) => {
+      if (user === undefined) {
+        return Promise.reject({ msg: 'Page not found' });
+      }
       res.status(200).send({ user });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };

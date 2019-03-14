@@ -12,4 +12,6 @@ apiRouter.use('/articles', articlesRouter);
 
 apiRouter.use('/comments', commentRouter);
 
+apiRouter;
+
 module.exports = apiRouter;

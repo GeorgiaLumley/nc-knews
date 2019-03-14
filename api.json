@@ -1,0 +1,41 @@
+{
+  "Users: /api/users": {
+    "GET": "returns all of the users that are available in an array that have valid keys",
+    "POST": "adds a new user to the users table that contain valid keys, returns the user that has just been added"
+  },
+  "Users: /api/users/:username": {
+    "GET": " returns all the information in the users table that have the same username primary key as the username"
+  },
+  "TOPICS: /api/topics": {
+    "GET": "returns all of the topics that are available in an array that have valid keys from the topics table",
+    "POST": "adds a new topic to the topic table that contains valid keys, and return the topic that has just been added"
+  },
+  "Articles: /api/articles": {
+    "GET": "returns all of the articles that are available in an array that have valid keys from the article table",
+    "POST": "adds a new article to the article table that contains valid keys, and return the topic that has just been added"
+  },
+  "Articles: /api/articles?~~~~": {
+    "author": "takes the query of authors and only serves up article that are written by that author, e.g. /api/articles?author=butter_bridge",
+    "topic": "take the query of topic and only serves up article that have that topic, e.g. /api/articles?topic=cats",
+    "sort_by": "takes the query of sort_by this defaults to created_at by can be changed to be sorted by any column e.g. /api/articles?sort_by=title",
+    "order": "takes a query of order which is defaulted to descending by can be queried to ascending, e.g. /api/articles?order=asc",
+    "limit": "takes a query of limit which is defaulted to 10 this sets the amount of article that will be returned, e.g. /api/articles?limit=5",
+    "chaining": "query's can be chained together using && between them, e.g. /api/articles?sort_by=title&&order=asc"
+  },
+  "Articles: /api/articles/:article_id": {
+    "GET": "return the article that has the article_id as a parameter in the endpoint",
+    "PATCH": "updates the votes and allows them to be either incremented or decremented"
+  },
+  "Articles: /api/articles/:article_id/comments": {
+    "GET": "return all the comments that have the article_id",
+    "POST": "adds a new comments to an article returning the comment that was added"
+  },
+  "Articles: /api/articles/:article_id/comments?~~~": {
+    "order": "query that orders the dates by default in descending order by can be queried to ascending, /api/articles/9/comments?order=asc",
+    "sort_by": "query that sorts the columns and defaults to created_at by can be changes to any column, e.g./api/articles/9/comments?sort_by=author",
+    "limit": "takes a query of limit which is defaulted to 10 this sets the amount of article that will be returned, e.g./api/articles/1/comments?limit=5"
+  },
+  "Comments: /api/comments/:comment_id": {
+    "PATCH": "updates the votes and allows them to be either incremented or decremented "
+  }
+}
