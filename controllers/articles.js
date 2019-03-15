@@ -45,7 +45,7 @@ exports.postArticles = (req, res, next) => {
       res.status(201).send({ article });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 
@@ -88,7 +88,7 @@ exports.sendArticleComments = (req, res, next) => {
       res.status(200).send({ comments });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 
@@ -99,7 +99,7 @@ exports.postNewComment = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 

@@ -6,7 +6,7 @@ exports.sendUsers = (req, res, next) => {
       res.status(200).send({ users });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 
@@ -16,7 +16,7 @@ exports.postNewUser = (req, res, next) => {
       res.status(201).send({ user });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 

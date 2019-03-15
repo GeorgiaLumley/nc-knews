@@ -14,7 +14,7 @@ exports.patchComment = (req, res, next) => {
         res.status(201).send({ updateVotes });
       })
       .catch((err) => {
-        console.log(err);
+        next(err);
       });
   } else {
     decrementVotes(comment_id, incVotes)
@@ -22,7 +22,7 @@ exports.patchComment = (req, res, next) => {
         res.status(201).send({ updateVotes });
       })
       .catch((err) => {
-        console.log(err);
+        next(err);
       });
   }
 };
@@ -34,6 +34,6 @@ exports.deleteComment = (req, res, next) => {
       res.status(204).send({ commentBeingDeleted });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };

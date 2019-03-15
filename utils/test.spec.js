@@ -1,3 +1,4 @@
+const { expect } = require('chai');
 const {
   formatArticleQuery,
   validateSlug,
@@ -7,7 +8,6 @@ const {
   validateId,
   formatVotes,
 } = require('./index.js');
-const { expect } = require('chai');
 
 describe('formatArticleQuery', () => {
   it('returns author: butter_bridge for a query of author', () => {

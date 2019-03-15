@@ -1,8 +1,10 @@
 process.env.NODE_ENV = 'test';
 const { expect } = require('chai');
+const supertest = require('supertest');
 const app = require('./app');
 const connection = require('./db/connection');
-const request = require('supertest')(app);
+
+const request = supertest(app);
 
 describe('/', () => {
   beforeEach(() => connection.seed.run());
@@ -264,6 +266,14 @@ describe('/', () => {
       it('DELETE status:204, deletes comment by its id', () => request.delete('/api/comments/7').expect(204));
     });
   });
+  // describe('/api', () => {
+  //   it('returns a json file of route info', () => request
+  //     .get('/api')
+  //     .expect(200)
+  //     .then((res) => {
+  //       console.log(res.body);
+  //     }));
+  // });
   describe('error handling', () => {
     it('GET status:404 /bad-url', () => request
       .get('/bad-url')

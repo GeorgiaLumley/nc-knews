@@ -44,6 +44,6 @@ exports.seed = function (knex, Promise) {
               .returning('*'),
           ]);
         })
-        .catch(error => console.log(error));
+        .catch(err => next(err));
     });
 };

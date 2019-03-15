@@ -1,4 +1,4 @@
-#NC KNEWS
+# NC KNEWS
 
 This is the sprint for nc knews. With articles, comments topics and users.
 
@@ -14,6 +14,11 @@ Things to install;
 - **supertest**: 3.4 `npm i supertest`
 - **eslint**: 5.9 `npm i eslint`
 - **husky**: 1.1 `npm i huskf`
+- **fs**: 0.0.1 `npm i fs`
+
+## creating knexfile.js
+
+a 
 
 ## Running the Tests
 
