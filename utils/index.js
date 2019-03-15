@@ -49,25 +49,10 @@ const correctComments = (comments, articlesRows) => {
 const authors = ['butter_bridge', 'icellusedkars', 'rogersop'];
 const topics = ['mitch', 'cats'];
 
-const formatArticleQuery = (query) => {
-  if (
-    (authors.includes(query.author) || query.author === undefined)
-    && (topics.includes(query.topic) || query.topic === undefined)
-  ) {
-    const obj = {};
-    if (query.author !== undefined) obj.author = query.author;
-    if (query.topic !== undefined) obj.topic = query.topic;
-
-    return obj;
-  }
-  return 'err';
-};
-
 const db = [
   { slug: 'mitch', description: 'tho man, the mitch, the legend' },
   { slug: 'cats', description: 'not dogs' },
 ];
-
 const validateSlug = (obj) => {
   for (let i = 0; i < db.length; i++) {
     if (db[i].slug === obj.slug) return 'err';
@@ -127,10 +112,26 @@ const validateId = (id) => {
 
 const formatVotes = (body) => {
   const bodArr = Object.keys(body);
+
   if (bodArr[0] !== 'incVotes') return false;
   if (isNaN(body.incVotes)) return false;
   if (bodArr.length !== 1) return false;
-  return true;
+
+  return body.incVotes;
+};
+
+const formatArticleQuery = (query) => {
+  if (
+    (authors.includes(query.author) || query.author === undefined)
+    && (topics.includes(query.topic) || query.topic === undefined)
+  ) {
+    const obj = {};
+    if (query.author !== undefined) obj.author = query.author;
+    if (query.topic !== undefined) obj.topic = query.topic;
+
+    return obj;
+  }
+  return 'err';
 };
 
 module.exports = {

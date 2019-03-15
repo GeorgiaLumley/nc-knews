@@ -13,14 +13,15 @@ exports.sendTopics = (req, res, next) => {
 
 exports.postTopic = (req, res, next) => {
   addNewTopic(req.body)
-    .then((topic) => {
-      if (topic[0].slug === undefined || topic[0].description === undefined) {
-        return Promise.reject({ msg: 'Bad Request' });
+    .then(([topic]) => {
+      if (topic.slug === undefined || topic.description === undefined) {
+        return Promise.reject({ status: 400, msg: 'Bad Request' });
       }
       const slug = validateSlug(topic);
       if (slug === 'err') {
-        return Promise.reject({ msg: 'Bad Request' });
+        return Promise.reject({ status: 422, msg: 'Unprocessable Entity' });
       }
+
       res.status(201).send({ topic });
     })
     .catch((err) => {

@@ -22,6 +22,7 @@ exports.sendArticles = (req, res, next) => {
   const correctQureySort = correctQuerySortBy(req.query.sort_by);
   const queryOrder = correctQueryOrder(req.query.order);
   const query = formatArticleQuery(req.query);
+
   if (correctQureySort === 'err' || queryOrder === 'err' || query === 'err') {
     next({ status: 400, msg: 'Bad Request' });
   } else {
@@ -51,6 +52,7 @@ exports.postArticles = (req, res, next) => {
 
 exports.sendArticleById = (req, res, next) => {
   const correct_id = validateId(req.params);
+
   if (correct_id === false) {
     next({ status: 400, msg: 'Bad Request' });
   } else {
@@ -58,7 +60,7 @@ exports.sendArticleById = (req, res, next) => {
     getArticleByArticleId(article_id)
       .then(([article]) => {
         if (article === undefined) {
-          return Promise.reject({ status: 400, msg: 'Bad Request' });
+          return Promise.reject({ status: 404, msg: 'Not Found' });
         }
         res.status(200).send({ article });
       })
@@ -104,25 +106,24 @@ exports.postNewComment = (req, res, next) => {
 };
 
 exports.updateArticleVotes = (req, res, next) => {
-  const incVote = req.body;
-  const correctVotes = formatVotes(incVote);
+  const votes = formatVotes(req.body);
 
-  if (correctVotes === false) {
+  if (votes === false) {
     next({ status: 400, msg: 'Bad Request' });
   } else {
     const { article_id } = req.params;
-    if (incVote.incVotes > 0) {
-      updateVotes(article_id, incVote)
-        .then((updateVotes) => {
-          res.status(201).send({ updateVotes });
+    if (votes > 0) {
+      updateVotes(article_id, votes)
+        .then(([updateVotes]) => {
+          res.status(200).send({ updateVotes });
         })
         .catch((err) => {
           next(err);
         });
     } else {
-      decrementVotes(article_id, incVote)
+      decrementVotes(article_id, votes)
         .then((updateVotes) => {
-          res.status(201).send({ updateVotes });
+          res.status(200).send({ updateVotes });
         })
         .catch((err) => {
           next(err);

@@ -67,7 +67,7 @@ describe('/', () => {
         .send(topicToAdd)
         .expect(201)
         .then(({ body }) => {
-          expect(body.topic[0].slug).to.equal(topicToAdd.slug);
+          expect(body.topic.slug).to.equal(topicToAdd.slug);
         });
     });
   });
@@ -148,6 +148,13 @@ describe('/', () => {
       .then((res) => {
         expect(res.body.articles).to.have.length(5);
       }));
+    xit('GET status:200 has a comment count', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].comment_count).to.be.a('string');
+        expect(res.body.articles[0].comment_count).to.eql(2);
+      }));
 
     describe('/article_id', () => {
       it('GET status:200, get article by article_id', () => request
@@ -162,31 +169,32 @@ describe('/', () => {
         return request
           .patch('/api/articles/7')
           .send(incVotes)
-          .expect(201)
+          .expect(200)
           .then((res) => {
-            expect(res.body.updateVotes).to.eql(1);
+            expect(res.body.updateVotes.votes).to.eql(1);
           });
       });
-      it('PATCH status:201 updates the votes', () => {
+      it('PATCH status:200 updates the votes', () => {
         const incVotes = { incVotes: 2 };
         return request
           .patch('/api/articles/7')
           .send(incVotes)
-          .expect(201)
+          .expect(200)
           .then((res) => {
-            expect(res.body.updateVotes).to.eql(1);
+            expect(res.body.updateVotes.votes).to.eql(2);
           });
       });
-      it('PATCH status:201 updates the votes down by 1', () => {
+      it('PATCH status:200 updates the votes down by 1', () => {
         const incVotes = { incVotes: -1 };
         return request
           .patch('/api/articles/7')
           .send(incVotes)
-          .expect(201)
+          .expect(200)
           .then((res) => {
             expect(res.body.updateVotes).to.eql(1);
           });
       });
+
       it('DELETE status:204, deletes article by its id', () => request.delete('/api/articles/7').expect(204));
     });
     describe('/comments', () => {
@@ -266,20 +274,19 @@ describe('/', () => {
       it('DELETE status:204, deletes comment by its id', () => request.delete('/api/comments/7').expect(204));
     });
   });
-  // describe('/api', () => {
-  //   it('returns a json file of route info', () => request
-  //     .get('/api')
-  //     .expect(200)
-  //     .then((res) => {
-  //       console.log(res.body);
-  //     }));
-  // });
+
   describe('error handling', () => {
     it('GET status:404 /bad-url', () => request
-      .get('/bad-url')
+      .get('/mitchs-endless-charm')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).to.equal('no route found');
+        expect(body.msg).to.equal('Not Found');
+      }));
+    it('GET status:404 /bad-url with more routes', () => request
+      .get('/bad-url/articles')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).to.equal('Not Found');
       }));
     describe('/users', () => {
       describe('/username', () => {
@@ -287,7 +294,7 @@ describe('/', () => {
           .get('/api/users/test')
           .expect(404)
           .then((res) => {
-            expect(res.body.msg).to.eql('Page not found');
+            expect(res.body.msg).to.eql('Not Found');
           }));
       });
     });
@@ -324,9 +331,9 @@ describe('/', () => {
         return request
           .post('/api/topics')
           .send(topicToAdd)
-          .expect(400)
+          .expect(422)
           .then(({ body }) => {
-            expect(body.msg).to.equal('Bad Request');
+            expect(body.msg).to.equal('Unprocessable Entity');
           });
       });
     });
@@ -413,6 +420,22 @@ describe('/', () => {
           .then((res) => {
             expect(res.body.msg).to.eql('Bad Request');
           }));
+        it('GET status:404 url contains a non-existent (but potentially valid) article_id', () => request
+          .get('/api/articles/30')
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).to.eql('Not Found');
+          }));
+        it('PATCH status:400 if given an invalid inc_votes', () => {
+          const incVotes = { incVotes: 'cats' };
+          return request
+            .patch('/api/articles/7')
+            .send(incVotes)
+            .expect(400)
+            .then((res) => {
+              expect(res.body.msg).to.eql('Bad Request');
+            });
+        });
       });
     });
   });

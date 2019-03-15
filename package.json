@@ -14,7 +14,7 @@
     "lint": "eslint ./ --fix",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
-    "dev": "nodemon run listen.js"
+    "start": "node run listen.js"
   },
   "repository": {
     "type": "git",

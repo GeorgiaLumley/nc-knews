@@ -25,7 +25,7 @@ exports.sendUserByUsername = (req, res, next) => {
   getUserByUsername(singleUsername)
     .then(([user]) => {
       if (user === undefined) {
-        return Promise.reject({ msg: 'Page not found' });
+        return Promise.reject({ msg: 'Not Found' });
       }
       res.status(200).send({ user });
     })

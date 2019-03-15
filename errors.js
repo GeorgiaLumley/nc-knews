@@ -1,7 +1,6 @@
 exports.handle400 = (err, req, res, next) => {
   if (
-    err.code === '23505'
-    || err.code === '23502'
+    err.code === '23502'
     || err.code === '23503'
     || err.code === '22P02'
     || err.status === 400
@@ -13,13 +12,24 @@ exports.handle400 = (err, req, res, next) => {
 };
 
 exports.handle404 = (err, req, res, next) => {
-  if (err.msg === 'Page not found') {
-    res.status(404).send({ msg: 'Page not found' });
+  if (err.msg === 'Not Found') {
+    res.status(404).send({ msg: 'Not Found' });
   } else {
     next(err);
   }
 };
 
+exports.handle422 = (err, req, res, next) => {
+  if (
+    err.msg === 'Unprocessable Entity'
+    || err.status === 422
+    || err.code === '23505'
+  ) {
+    res.status(422).send({ msg: 'Unprocessable Entity' });
+  } else {
+    next(err);
+  }
+};
 exports.handle500 = (err, req, res, next) => {
   res.status(500).send({ msg: 'Internal Server Error' });
 };
