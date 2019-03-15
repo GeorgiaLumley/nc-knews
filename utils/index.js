@@ -119,7 +119,6 @@ const validatePost = (body) => {
 };
 
 const validateId = (id) => {
-  console.log('in', id);
   if (!isNaN(id.article_id)) {
     return true;
   }

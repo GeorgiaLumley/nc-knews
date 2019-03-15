@@ -378,7 +378,6 @@ describe('/', () => {
           });
       });
       describe('/:article_id', () => {
-        // no clue why it gets 405 i dont have one of those set up!
         it('article_id is invalid', () => request
           .get('/api/articles/test')
           .expect(400)
@@ -388,6 +387,18 @@ describe('/', () => {
         it('there is no inc_votes on the body', () => request
           .patch('/api/articles/7')
           .send({})
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).to.eql('Bad Request');
+          }));
+        it('deletes an article by an article id that dose not exist', () => request
+          .delete('/api/articles/100')
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).to.eql('Bad Request');
+          }));
+        it('deletes an article by an article id that is invalid', () => request
+          .delete('/api/articles/catssss')
           .expect(400)
           .then((res) => {
             expect(res.body.msg).to.eql('Bad Request');

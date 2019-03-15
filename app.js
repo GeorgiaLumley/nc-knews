@@ -16,6 +16,7 @@ app.use((err, req, res, next) => {
     err.code === '23505'
     || err.code === '23502'
     || err.code === '23503'
+    || err.code === '22P02'
     || err.status === 400
   ) {
     res.status(400).send({ msg: 'Bad Request' });
@@ -32,7 +33,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  console.log(err.code);
   res.status(500).send({ msg: 'Internal Server Error' });
 });
 

@@ -58,7 +58,7 @@ exports.sendArticleById = (req, res, next) => {
     getArticleByArticleId(article_id)
       .then(([article]) => {
         if (article === undefined) {
-          return Promise.reject({ msg: 'Bad Request' });
+          return Promise.reject({ status: 400, msg: 'Bad Request' });
         }
         res.status(200).send({ article });
       })
@@ -70,10 +70,13 @@ exports.deleteArticle = (req, res, next) => {
   const { article_id } = req.params;
   removeArticle(article_id)
     .then((articlesBeingDeleted) => {
+      if (articlesBeingDeleted === 0) {
+        return Promise.reject({ status: 400, msg: 'Bad Request' });
+      }
       if (articlesBeingDeleted === 1) res.sendStatus(204);
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 
