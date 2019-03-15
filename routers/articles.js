@@ -13,6 +13,7 @@ articlesRouter
   .route('/')
   .get(sendArticles)
   .post(postArticles);
+// .all
 
 articlesRouter
   .route('/:article_id')

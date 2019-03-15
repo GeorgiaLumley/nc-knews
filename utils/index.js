@@ -65,7 +65,7 @@ const formatArticleQuery = (query) => {
 
 const db = [
   { slug: 'mitch', description: 'tho man, the mitch, the legend' },
-  { slug: 'cats', decription: 'not dogs' },
+  { slug: 'cats', description: 'not dogs' },
 ];
 
 const validateSlug = (obj) => {
@@ -101,17 +101,37 @@ const correctQueryOrder = (order) => {
 };
 
 const validatePost = (body) => {
-  const articleKeys = ['title', 'body', 'votes', 'topic', 'author'];
-  const keys = Object.keys(body);
-  if (articleKeys.length !== keys.length) return 'err';
-  const orderedArticleKeys = articleKeys.sort();
-  const orderedKeys = keys.sort();
-  for (let i = 0; i < orderedArticleKeys.length; i++) {
-    if (orderedArticleKeys[i] !== orderedKeys[i]) {
-      return 'err';
+  if (authors.includes(body.author) && topics.includes(body.topic)) {
+    const articleKeys = ['title', 'body', 'votes', 'topic', 'author'];
+    const keys = Object.keys(body);
+    if (articleKeys.length !== keys.length) return 'err';
+    const orderedArticleKeys = articleKeys.sort();
+    const orderedKeys = keys.sort();
+    for (let i = 0; i < orderedArticleKeys.length; i++) {
+      if (orderedArticleKeys[i] !== orderedKeys[i]) {
+        return 'err';
+      }
+      return 'fine';
     }
-    return 'fine';
+  } else {
+    return 'err';
   }
+};
+
+const validateId = (id) => {
+  console.log('in', id);
+  if (!isNaN(id.article_id)) {
+    return true;
+  }
+  return false;
+};
+
+const formatVotes = (body) => {
+  const bodArr = Object.keys(body);
+  if (bodArr[0] !== 'incVotes') return false;
+  if (isNaN(body.incVotes)) return false;
+  if (bodArr.length !== 1) return false;
+  return true;
 };
 
 module.exports = {
@@ -124,4 +144,6 @@ module.exports = {
   correctQuerySortBy,
   correctQueryOrder,
   validatePost,
+  validateId,
+  formatVotes,
 };

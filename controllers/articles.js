@@ -13,6 +13,8 @@ const {
   correctQuerySortBy,
   correctQueryOrder,
   validatePost,
+  validateId,
+  formatVotes,
 } = require('../utils/index');
 
 exports.sendArticles = (req, res, next) => {
@@ -48,14 +50,20 @@ exports.postArticles = (req, res, next) => {
 };
 
 exports.sendArticleById = (req, res, next) => {
-  const { article_id } = req.params;
-  getArticleByArticleId(article_id)
-    .then(([article]) => {
-      res.status(200).send({ article });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const correct_id = validateId(req.params);
+  if (correct_id === false) {
+    next({ status: 400, msg: 'Bad Request' });
+  } else {
+    const { article_id } = req.params;
+    getArticleByArticleId(article_id)
+      .then(([article]) => {
+        if (article === undefined) {
+          return Promise.reject({ msg: 'Bad Request' });
+        }
+        res.status(200).send({ article });
+      })
+      .catch(err => next(err));
+  }
 };
 
 exports.deleteArticle = (req, res, next) => {
@@ -94,22 +102,28 @@ exports.postNewComment = (req, res, next) => {
 
 exports.updateArticleVotes = (req, res, next) => {
   const incVote = req.body;
-  const { article_id } = req.params;
-  if (incVote.incVotes > 0) {
-    updateVotes(article_id, incVote)
-      .then((updateVotes) => {
-        res.status(201).send({ updateVotes });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const correctVotes = formatVotes(incVote);
+
+  if (correctVotes === false) {
+    next({ status: 400, msg: 'Bad Request' });
   } else {
-    decrementVotes(article_id, incVote)
-      .then((updateVotes) => {
-        res.status(201).send({ updateVotes });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const { article_id } = req.params;
+    if (incVote.incVotes > 0) {
+      updateVotes(article_id, incVote)
+        .then((updateVotes) => {
+          res.status(201).send({ updateVotes });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    } else {
+      decrementVotes(article_id, incVote)
+        .then((updateVotes) => {
+          res.status(201).send({ updateVotes });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    }
   }
 };

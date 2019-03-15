@@ -267,7 +267,7 @@ describe('/', () => {
   describe('error handling', () => {
     it('GET status:404 /bad-url', () => request
       .get('/bad-url')
-      .expect(405)
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).to.equal('no route found');
       }));
@@ -346,7 +346,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.eql('Bad Request');
         }));
-      it('post is missing a title, body, topic,username', () => {
+      it('post is missing a title, body, topic, or username', () => {
         const articlesToAdd = {
           title: 'test',
           body: 'this is a test',
@@ -360,6 +360,38 @@ describe('/', () => {
           .then((res) => {
             expect(res.body.msg).to.eql('Bad Request');
           });
+      });
+      it('post has an incorrect author or topic', () => {
+        const articlesToAdd = {
+          title: 'test',
+          body: 'this is a test',
+          votes: 5,
+          topic: 'cats',
+          author: 'Georgia',
+        };
+        return request
+          .post('/api/articles')
+          .send(articlesToAdd)
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).to.eql('Bad Request');
+          });
+      });
+      describe('/:article_id', () => {
+        // no clue why it gets 405 i dont have one of those set up!
+        it('article_id is invalid', () => request
+          .get('/api/articles/test')
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).to.eql('Bad Request');
+          }));
+        it('there is no inc_votes on the body', () => request
+          .patch('/api/articles/7')
+          .send({})
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).to.eql('Bad Request');
+          }));
       });
     });
   });

@@ -4,6 +4,8 @@ const {
   correctQuerySortBy,
   correctQueryOrder,
   validatePost,
+  validateId,
+  formatVotes,
 } = require('./index.js');
 const { expect } = require('chai');
 
@@ -105,6 +107,44 @@ describe('validatePost', () => {
       author: 'butter_bridge',
     });
     const expected = 'err';
+    expect(input).to.eql(expected);
+  });
+});
+
+describe('validateId', () => {
+  it('the id is valid', () => {
+    const input = validateId({
+      article_id: '7',
+    });
+    const expected = true;
+    expect(input).to.eql(expected);
+  });
+  it('the id is invalid', () => {
+    const input = validateId({ article_id: 'test' });
+    const expected = false;
+    expect(input).to.eql(expected);
+  });
+});
+
+describe('formatVotes', () => {
+  it('errs when no votes are passed', () => {
+    const input = formatVotes({});
+    const expected = false;
+    expect(input).to.eql(expected);
+  });
+  it('errs when no invalid vote amount is passed', () => {
+    const input = formatVotes({ incVotes: 'cat' });
+    const expected = false;
+    expect(input).to.eql(expected);
+  });
+  it('errs when other keys and values are passed', () => {
+    const input = formatVotes({ incVotes: '1', name: 'lily' });
+    const expected = false;
+    expect(input).to.eql(expected);
+  });
+  it('true when the correct information is passed', () => {
+    const input = formatVotes({ incVotes: '1' });
+    const expected = true;
     expect(input).to.eql(expected);
   });
 });
