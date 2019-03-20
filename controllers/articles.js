@@ -54,7 +54,7 @@ exports.sendArticleById = (req, res, next) => {
   const correct_id = validateId(req.params);
 
   if (correct_id === false) {
-    next({ status: 400, msg: 'Bad Request' });
+    next({ status: 404, msg: 'Not Found' });
   } else {
     const { article_id } = req.params;
     getArticleByArticleId(article_id)
@@ -87,6 +87,9 @@ exports.sendArticleComments = (req, res, next) => {
   const { article_id } = req.params;
   getArticleComments(article_id, order, sort_by, limit)
     .then((comments) => {
+      if (comments.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      }
       res.status(200).send({ comments });
     })
     .catch((err) => {
@@ -96,7 +99,8 @@ exports.sendArticleComments = (req, res, next) => {
 
 exports.postNewComment = (req, res, next) => {
   const newComment = req.body;
-  addNewComment(newComment)
+  const { id } = req.params;
+  addNewComment(newComment, id)
     .then((comment) => {
       res.status(201).send({ comment });
     })

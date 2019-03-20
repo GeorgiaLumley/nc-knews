@@ -25,7 +25,7 @@ exports.seed = function (knex, Promise) {
       return Promise.all([
         userRows,
         topicRows,
-        knex('article')
+        knex('articles')
           .insert(formatArticles)
           .returning('*'),
       ])
