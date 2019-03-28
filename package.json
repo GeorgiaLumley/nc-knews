@@ -12,9 +12,9 @@
     "test": "mocha ./spec/app.spec.js ",
     "test-util": "mocha ./utils/test.spec.js",
     "lint": "eslint ./ --fix",
+    "start": "node listen.js",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
-    "start": "node listen.js",
     "seed:prod": "DB_URL=$(heroku config:get DATABASE_URL) knex seed:run --env production",
     "migrate:latest:prod": "DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest --env production",
     "migrate:rollback:prod": "DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback --env production"
@@ -37,7 +37,7 @@
     "fs": "0.0.1-security",
     "knex": "^0.15.2",
     "mocha": "^6.0.2",
-    "nodemon": "^1.18.10",
+   
     "pg": "^7.8.1",
     "supertest": "^3.4.2"
   },
