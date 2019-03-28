@@ -187,16 +187,7 @@ describe("/", () => {
             expect(res.body.updateVotes.votes).to.eql(1);
           });
       });
-      it("PATCH status:200 updates the votes", () => {
-        const incVotes = { incVotes: 2 };
-        return request
-          .patch("/api/articles/7")
-          .send(incVotes)
-          .expect(200)
-          .then(res => {
-            expect(res.body.updateVotes.votes).to.eql(2);
-          });
-      });
+
       it("PATCH status:200 updates the votes down by 1", () => {
         const incVotes = { incVotes: -1 };
         return request
@@ -204,7 +195,7 @@ describe("/", () => {
           .send(incVotes)
           .expect(200)
           .then(res => {
-            expect(res.body.updateVotes).to.eql(1);
+            expect(res.body.updateVotes.votes).to.eql(-1);
           });
       });
 
@@ -441,19 +432,20 @@ describe("/", () => {
             .then(res => {
               expect(res.body.msg).to.eql("Not Found");
             }));
-        it("there is no inc_votes on the body", () =>
+        it.only("there is no inc_votes on the body", () =>
           request
             .patch("/api/articles/7")
             .send({})
-            .expect(400)
+            .expect(200)
             .then(res => {
-              expect(res.body.msg).to.eql("Bad Request");
+              expect(res.body.updateVotes.votes).to.eql(0);
             }));
         it("deletes an article by an article id that dose not exist", () =>
           request
             .delete("/api/articles/100")
             .expect(400)
             .then(res => {
+              console.log(res.body);
               expect(res.body.msg).to.eql("Bad Request");
             }));
         it("deletes an article by an article id that is invalid", () =>
@@ -546,6 +538,46 @@ describe("/", () => {
         .expect(404)
         .then(res => {
           expect(res.body.msg).to.eql("Not Found");
+        });
+    });
+  });
+  describe("nc tests", () => {
+    it("status:405 invalid request method for end-point", () =>
+      request
+        .delete("/api/articles")
+        .expect(405)
+        .then(res => {
+          expect(res.body.msg).to.eql("Method Not Allowed");
+        }));
+
+    it('PATCH status:200 and an updated article when given a body including a valid "inc_votes" (VOTE UP', () => {
+      const incVotes = { incVotes: 1 };
+      return request
+        .patch("/api/articles/9")
+        .send(incVotes)
+        .expect(200)
+        .then(res => {
+          expect(res.body.updateVotes.votes).to.eql(1);
+        });
+    });
+    it("PATCH status:200 responds with an updated article when given a body including a valid inc_votes (VOTE DOWN)", () => {
+      const incVotes = { incVotes: -1 };
+      return request
+        .patch("/api/articles/9")
+        .send(incVotes)
+        .expect(200)
+        .then(res => {
+          expect(res.body.updateVotes.votes).to.eql(1);
+        });
+    });
+    it("PATCH status:200s no body responds with an unmodified article", () => {
+      const incVotes = {};
+      return request
+        .patch("/api/articles/9")
+        .send(incVotes)
+        .expect(200)
+        .then(res => {
+          expect(res.body.updateVotes.votes).to.eql(0);
         });
     });
   });

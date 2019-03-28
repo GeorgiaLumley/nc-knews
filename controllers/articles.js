@@ -110,28 +110,30 @@ exports.postNewComment = (req, res, next) => {
 };
 
 exports.updateArticleVotes = (req, res, next) => {
-  const votes = formatVotes(req.body);
+  const votes = req.body;
 
-  if (votes === false) {
-    next({ status: 400, msg: 'Bad Request' });
+  // const votes = formatVotes(req.body);
+
+  // if (votes === false) {
+  //   next({ status: 400, msg: 'Bad Request' });
+  // } else {
+  const { article_id } = req.params;
+  if (votes.incVotes > 0) {
+    updateVotes(article_id, votes)
+      .then(([updateVotes]) => {
+        res.status(200).send({ updateVotes });
+      })
+      .catch((err) => {
+        next(err);
+      });
   } else {
-    const { article_id } = req.params;
-    if (votes > 0) {
-      updateVotes(article_id, votes)
-        .then(([updateVotes]) => {
-          res.status(200).send({ updateVotes });
-        })
-        .catch((err) => {
-          next(err);
-        });
-    } else {
-      decrementVotes(article_id, votes)
-        .then((updateVotes) => {
-          res.status(200).send({ updateVotes });
-        })
-        .catch((err) => {
-          next(err);
-        });
-    }
+    decrementVotes(article_id, votes)
+      .then(([updateVotes]) => {
+        res.status(200).send({ updateVotes });
+      })
+      .catch((err) => {
+        next(err);
+      });
+    //  }
   }
 };

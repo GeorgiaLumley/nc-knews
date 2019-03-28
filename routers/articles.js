@@ -8,12 +8,13 @@ const {
   postNewComment,
   updateArticleVotes,
 } = require('../controllers/articles');
+const { methodNotAllowed } = require('../controllers/err');
 
 articlesRouter
   .route('/')
   .get(sendArticles)
-  .post(postArticles);
-// .all
+  .post(postArticles)
+  .all(methodNotAllowed);
 
 articlesRouter
   .route('/:article_id')

@@ -4,6 +4,7 @@ const topicRouter = require('./topics');
 const articlesRouter = require('./articles');
 const commentRouter = require('./comments');
 const { apiInfo } = require('../controllers/api');
+const { methodNotAllowed } = require('../controllers/err');
 
 apiRouter.route('/').get(apiInfo);
 
@@ -15,6 +16,6 @@ apiRouter.use('/articles', articlesRouter);
 
 apiRouter.use('/comments', commentRouter);
 
-apiRouter;
+apiRouter.all(methodNotAllowed);
 
 module.exports = apiRouter;

@@ -37,4 +37,5 @@ exports.updateVotes = (id, votes) => connection('articles')
 
 exports.decrementVotes = (article_id, incVote) => connection('articles')
   .where('article_id', article_id)
-  .decrement('votes', incVote);
+  .decrement('votes', incVote)
+  .returning('*');
