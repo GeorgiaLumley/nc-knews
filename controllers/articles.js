@@ -14,7 +14,8 @@ const {
   correctQueryOrder,
   validatePost,
   validateId,
-  formatVotes
+  formatVotes,
+  topicAndAuthorHandler
 } = require("../utils/index");
 const { getUsers } = require("../models/users");
 
@@ -28,21 +29,17 @@ exports.sendArticles = (req, res, next) => {
   } else {
     getArticles(sort_by, order, limit)
       .then(articles => {
-        if (req.query.author === undefined) {
-          res
-            .status(200)
-            .send({ articles })
-            .catch(err => {
-              next(err);
-            });
+        if (req.query.author === undefined && req.query.topic === undefined) {
+          res.status(200).send({ articles });
         } else {
-          const filteredByAuthor = [];
-          for (let i = 0; i < articles.length; i++) {
-            if (articles[i].author === req.query.author) {
-              filteredByAuthor.push(articles[i]);
-            }
+          const author = req.query.author;
+          const topic = req.query.topic;
+          const filtered = topicAndAuthorHandler(articles, author, topic);
+          if (filtered.length === 0) {
+            next({ msg: "Bad Request" });
           }
-          res.status(200).send({ filteredByAuthor });
+
+          res.status(200).send({ filtered });
         }
       })
       .catch(err => {
@@ -118,7 +115,7 @@ exports.postNewComment = (req, res, next) => {
   const { id } = req.params;
 
   const existingUsers = getUsers();
-  console.log(existingUsers);
+
   for (let i = 0; i < existingUsers.length; i++) {
     if (existingUsers[i] !== newComment.author) {
       next({ status: 422, msg: "UNPROCESSABLE ENTITY" });
@@ -149,7 +146,6 @@ exports.updateArticleVotes = (req, res, next) => {
   } else if (votes.incVotes < 0) {
     decrementVotes(article_id, votes)
       .then(([updateVotes]) => {
-        console.log(updateVotes);
         res.status(200).send({ updateVotes });
       })
       .catch(err => {
@@ -159,7 +155,6 @@ exports.updateArticleVotes = (req, res, next) => {
     const { article_id } = req.params;
     return getArticleByArticleId(article_id)
       .then(unchangedVotes => {
-        console.log(unchangedVotes);
         res.status(200).send({ unchangedVotes });
       })
 

@@ -124,6 +124,40 @@ const formatArticleQuery = (query) => {
   return 'err';
 };
 
+const topicAndAuthorHandler = (articles, author, topic) => {
+  if (topic === undefined && author !== undefined) {
+    const filteredAuthor = [];
+    for (let i = 0; i < articles.length; i++) {
+      if (articles[i].author === author) {
+        filteredAuthor.push(articles[i]);
+      }
+    }
+    return filteredAuthor;
+  } if (topic !== undefined && author === undefined) {
+    const filteredTopic = [];
+    for (let i = 0; i < articles.length; i++) {
+      if (articles[i].topic === topic) {
+        filteredTopic.push(articles[i]);
+      }
+    }
+    return filteredTopic;
+  } if (topic !== undefined && author !== undefined) {
+    const filteredAuthor = [];
+    for (let i = 0; i < articles.length; i++) {
+      if (articles[i].author === author) {
+        filteredAuthor.push(articles[i]);
+      }
+    }
+    const matched = [];
+    for (let i = 0; i < filteredAuthor.length; i++) {
+      if (filteredAuthor[i].topic === topic) {
+        matched.push(filteredAuthor[i]);
+      }
+    }
+    return matched;
+  }
+};
+
 module.exports = {
   formattedArticles,
   getArticleIds,
@@ -135,4 +169,5 @@ module.exports = {
   validatePost,
   validateId,
   formatVotes,
+  topicAndAuthorHandler,
 };

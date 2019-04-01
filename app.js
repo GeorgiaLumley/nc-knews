@@ -1,24 +1,24 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const {
   handle400,
   handle404,
   handle405,
   handle500,
-  handle422
-} = require("./errors");
+  handle422,
+} = require('./errors');
 
 const app = express();
-const apiRouter = require("./routers/api");
+const apiRouter = require('./routers/api');
 
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use("/api", apiRouter);
+app.use('/api', apiRouter);
 
-app.use("/*", (req, res) => {
-  res.status(404).send({ msg: "Not Found" });
+app.use('/*', (req, res) => {
+  res.status(404).send({ msg: 'Not Found' });
 });
 
 app.use(handle400);

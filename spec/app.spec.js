@@ -113,14 +113,21 @@ describe("/", () => {
         .get("/api/articles?author=butter_bridge")
         .expect(200)
         .then(res => {
-          expect(res.body.filteredByAuthor).to.have.length(2);
+          expect(res.body.filtered).to.have.length(2);
         }));
     it("QUERY takes a query of topic", () =>
       request
         .get("/api/articles?topic=cats")
         .expect(200)
         .then(res => {
-          expect(res.body.articles).to.have.length(1);
+          expect(res.body.filtered).to.have.length(1);
+        }));
+    it("Query take both topic and author", () =>
+      request
+        .get("/api/articles?topic=mitch&&author=butter_bridge")
+        .expect(200)
+        .then(res => {
+          expect(res.body.filtered).to.have.length(2);
         }));
     it("GET status:200 serves up default sort_by of articles in ascending order by date", () =>
       request
@@ -145,6 +152,13 @@ describe("/", () => {
         .then(res => {
           expect(res.body.articles[0].title).to.eql("Moustache");
         }));
+    it("GET status:200 serves up sort_by of articles  by title in descending order by date", () =>
+      request
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles[0].title).to.eql("Moustache");
+        }));
     it("QUERY status:200 sets a default limit of 10", () =>
       request
         .get("/api/articles")
@@ -159,14 +173,13 @@ describe("/", () => {
         .then(res => {
           expect(res.body.articles).to.have.length(5);
         }));
-    it("Query sorts by author", () => {
-      return request
+    it("Query sorts by author", () =>
+      request
         .get("/api/articles?author=rogersop")
         .expect(200)
         .then(res => {
-          expect(res.body.filteredByAuthor[0].author).to.eql("rogersop");
-        });
-    });
+          expect(res.body.filtered[0].author).to.eql("rogersop");
+        }));
     xit("GET status:200 has a comment count", () =>
       request
         .get("/api/articles")
