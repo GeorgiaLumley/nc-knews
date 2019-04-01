@@ -6,16 +6,17 @@ const {
   getArticleComments,
   addNewComment,
   updateVotes,
-  decrementVotes,
-} = require('../models/articles');
+  decrementVotes
+} = require("../models/articles");
 const {
   formatArticleQuery,
   correctQuerySortBy,
   correctQueryOrder,
   validatePost,
   validateId,
-  formatVotes,
-} = require('../utils/index');
+  formatVotes
+} = require("../utils/index");
+const { getUsers } = require("../models/users");
 
 exports.sendArticles = (req, res, next) => {
   const { sort_by, order, limit } = req.query;
@@ -23,14 +24,14 @@ exports.sendArticles = (req, res, next) => {
   const queryOrder = correctQueryOrder(req.query.order);
   const query = formatArticleQuery(req.query);
 
-  if (correctQureySort === 'err' || queryOrder === 'err' || query === 'err') {
-    next({ status: 400, msg: 'Bad Request' });
+  if (correctQureySort === "err" || queryOrder === "err" || query === "err") {
+    next({ status: 400, msg: "Bad Request" });
   } else {
     getArticles(query, sort_by, order, limit)
-      .then((articles) => {
+      .then(articles => {
         res.status(200).send({ articles });
       })
-      .catch((err) => {
+      .catch(err => {
         next(err);
       });
   }
@@ -38,14 +39,14 @@ exports.sendArticles = (req, res, next) => {
 
 exports.postArticles = (req, res, next) => {
   const correctPost = validatePost(req.body);
-  if (correctPost === 'err') {
-    next({ status: 400, msg: 'Bad Request' });
+  if (correctPost === "err") {
+    next({ status: 400, msg: "Bad Request" });
   }
   addNewArticle(req.body)
-    .then((article) => {
+    .then(article => {
       res.status(201).send({ article });
     })
-    .catch((err) => {
+    .catch(err => {
       next(err);
     });
 };
@@ -54,13 +55,13 @@ exports.sendArticleById = (req, res, next) => {
   const correct_id = validateId(req.params);
 
   if (correct_id === false) {
-    next({ status: 404, msg: 'Not Found' });
+    next({ status: 404, msg: "Not Found" });
   } else {
     const { article_id } = req.params;
     getArticleByArticleId(article_id)
       .then(([article]) => {
         if (article === undefined) {
-          return Promise.reject({ status: 404, msg: 'Not Found' });
+          return Promise.reject({ status: 404, msg: "Not Found" });
         }
         res.status(200).send({ article });
       })
@@ -71,13 +72,13 @@ exports.sendArticleById = (req, res, next) => {
 exports.deleteArticle = (req, res, next) => {
   const { article_id } = req.params;
   removeArticle(article_id)
-    .then((articlesBeingDeleted) => {
+    .then(articlesBeingDeleted => {
       if (articlesBeingDeleted === 0) {
-        return Promise.reject({ status: 400, msg: 'Bad Request' });
+        return Promise.reject({ status: 400, msg: "Bad Request" });
       }
       if (articlesBeingDeleted === 1) res.sendStatus(204);
     })
-    .catch((err) => {
+    .catch(err => {
       next(err);
     });
 };
@@ -86,25 +87,35 @@ exports.sendArticleComments = (req, res, next) => {
   const { sort_by, order, limit } = req.query;
   const { article_id } = req.params;
   getArticleComments(article_id, order, sort_by, limit)
-    .then((comments) => {
+    .then(comments => {
       if (comments.length === 0) {
-        return Promise.reject({ status: 404, msg: 'Not Found' });
+        return Promise.reject({ status: 404, msg: "Not Found" });
       }
       res.status(200).send({ comments });
     })
-    .catch((err) => {
+    .catch(err => {
       next(err);
     });
 };
 
 exports.postNewComment = (req, res, next) => {
   const newComment = req.body;
+
   const { id } = req.params;
+
+  const existingUsers = getUsers();
+  console.log(existingUsers);
+  for (let i = 0; i < existingUsers.length; i++) {
+    if (existingUsers[i] !== newComment.author) {
+      next({ status: 422, msg: "UNPROCESSABLE ENTITY" });
+    }
+  }
+
   addNewComment(newComment, id)
-    .then((comment) => {
+    .then(comment => {
       res.status(201).send({ comment });
     })
-    .catch((err) => {
+    .catch(err => {
       next(err);
     });
 };
@@ -112,28 +123,34 @@ exports.postNewComment = (req, res, next) => {
 exports.updateArticleVotes = (req, res, next) => {
   const votes = req.body;
 
-  // const votes = formatVotes(req.body);
-
-  // if (votes === false) {
-  //   next({ status: 400, msg: 'Bad Request' });
-  // } else {
   const { article_id } = req.params;
   if (votes.incVotes > 0) {
     updateVotes(article_id, votes)
       .then(([updateVotes]) => {
         res.status(200).send({ updateVotes });
       })
-      .catch((err) => {
+      .catch(err => {
+        next(err);
+      });
+  } else if (votes.incVotes < 0) {
+    decrementVotes(article_id, votes)
+      .then(([updateVotes]) => {
+        console.log(updateVotes);
+        res.status(200).send({ updateVotes });
+      })
+      .catch(err => {
         next(err);
       });
   } else {
-    decrementVotes(article_id, votes)
-      .then(([updateVotes]) => {
-        res.status(200).send({ updateVotes });
+    const { article_id } = req.params;
+    return getArticleByArticleId(article_id)
+      .then(unchangedVotes => {
+        console.log(unchangedVotes);
+        res.status(200).send({ unchangedVotes });
       })
-      .catch((err) => {
+
+      .catch(err => {
         next(err);
       });
-    //  }
   }
 };

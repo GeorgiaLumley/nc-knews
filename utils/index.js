@@ -49,17 +49,6 @@ const correctComments = (comments, articlesRows) => {
 const authors = ['butter_bridge', 'icellusedkars', 'rogersop'];
 const topics = ['mitch', 'cats'];
 
-const db = [
-  { slug: 'mitch', description: 'tho man, the mitch, the legend' },
-  { slug: 'cats', description: 'not dogs' },
-];
-const validateSlug = (obj) => {
-  for (let i = 0; i < db.length; i++) {
-    if (db[i].slug === obj.slug) return 'err';
-  }
-  return 'fine';
-};
-
 const columns = [
   'article_id',
   'title',
@@ -69,6 +58,7 @@ const columns = [
   'author',
   'created_at',
 ];
+
 const correctQuerySortBy = (sort_by) => {
   if (sort_by === undefined) return 'fine';
   if (columns.includes(sort_by)) {
@@ -140,7 +130,6 @@ module.exports = {
   correctComments,
   getArticleId,
   formatArticleQuery,
-  validateSlug,
   correctQuerySortBy,
   correctQueryOrder,
   validatePost,

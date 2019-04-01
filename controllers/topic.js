@@ -1,5 +1,5 @@
 const { getTopics, addNewTopic } = require('../models/topic');
-const { validateSlug } = require('../utils/index');
+
 
 exports.sendTopics = (req, res, next) => {
   getTopics()
@@ -17,9 +17,9 @@ exports.postTopic = (req, res, next) => {
       if (topic.slug === undefined || topic.description === undefined) {
         return Promise.reject({ status: 400, msg: 'Bad Request' });
       }
-      const slug = validateSlug(topic);
-      if (slug === 'err') {
-        return Promise.reject({ status: 422, msg: 'Unprocessable Entity' });
+      const slug = getTopics();
+      for (let i = 0; i < slug.length; i++) {
+        if (slug[i] === req.body.slug) return Promise.reject({ status: 422, msg: 'Unprocessable Entity' });
       }
 
       res.status(201).send({ topic });
