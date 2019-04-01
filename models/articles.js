@@ -1,41 +1,49 @@
-const connection = require('../db/connection');
+const connection = require("../db/connection");
 
-exports.getArticles = (query, sort_by, order, limit) => connection('articles')
-  .select('*')
-// .count({ comment_count: "comment_id" })
-// .leftJoin("comments", "comment.article_id", "article.article_id")
-  .where(query)
-  .orderBy(sort_by || 'created_at', order || 'desc')
-  .limit(limit || 10);
+exports.getArticles = (sort_by, order, limit) =>
+  connection("articles")
+    .select("*")
+    // .count({ comment_count: "comment_id" })
+    // .leftJoin("comments", "comment.article_id", "article.article_id")
 
-exports.addNewArticle = obj => connection('articles')
-  .insert(obj)
-  .returning('*');
+    .orderBy(sort_by || "created_at", order || "desc")
+    .limit(limit || 10);
 
-exports.getArticleByArticleId = id => connection('articles')
-  .select('*')
-  .where('article_id', id);
+exports.addNewArticle = obj =>
+  connection("articles")
+    .insert(obj)
+    .returning("*");
 
-exports.removeArticle = article_id => connection('articles')
-  .where({ article_id })
-  .del();
+exports.getArticleByArticleId = id =>
+  connection("articles")
+    .select("*")
+    .where("article_id", id);
 
-exports.getArticleComments = (article_id, order, sort_by, limit) => connection('comments')
-  .select('*')
-  .where('article_id', article_id)
-  .orderBy(sort_by || 'created_at', order || 'desc')
-  .limit(limit || 10);
+exports.removeArticle = article_id =>
+  connection("articles")
+    .where({ article_id })
+    .del();
 
-exports.addNewComment = (newComment, id) => connection('comments')
-  .insert(newComment)
-  .returning('*');
+exports.getArticleComments = (article_id, order, sort_by, limit) =>
+  connection("comments")
+    .select("*")
+    .where("article_id", article_id)
+    .orderBy(sort_by || "created_at", order || "desc")
+    .limit(limit || 10);
 
-exports.updateVotes = (id, votes) => connection('articles')
-  .increment('votes', votes)
-  .where('article_id', id)
-  .returning('*');
+exports.addNewComment = (newComment, id) =>
+  connection("comments")
+    .insert(newComment)
+    .returning("*");
 
-exports.decrementVotes = (article_id, incVote) => connection('articles')
-  .where('article_id', article_id)
-  .decrement('votes', incVote)
-  .returning('*');
+exports.updateVotes = (id, votes) =>
+  connection("articles")
+    .increment("votes", votes)
+    .where("article_id", id)
+    .returning("*");
+
+exports.decrementVotes = (article_id, incVote) =>
+  connection("articles")
+    .where("article_id", article_id)
+    .decrement("votes", incVote)
+    .returning("*");

@@ -22,14 +22,28 @@ exports.sendArticles = (req, res, next) => {
   const { sort_by, order, limit } = req.query;
   const correctQureySort = correctQuerySortBy(req.query.sort_by);
   const queryOrder = correctQueryOrder(req.query.order);
-  const query = formatArticleQuery(req.query);
 
-  if (correctQureySort === "err" || queryOrder === "err" || query === "err") {
+  if (correctQureySort === "err" || queryOrder === "err") {
     next({ status: 400, msg: "Bad Request" });
   } else {
-    getArticles(query, sort_by, order, limit)
+    getArticles(sort_by, order, limit)
       .then(articles => {
-        res.status(200).send({ articles });
+        if (req.query.author === undefined) {
+          res
+            .status(200)
+            .send({ articles })
+            .catch(err => {
+              next(err);
+            });
+        } else {
+          const filteredByAuthor = [];
+          for (let i = 0; i < articles.length; i++) {
+            if (articles[i].author === req.query.author) {
+              filteredByAuthor.push(articles[i]);
+            }
+          }
+          res.status(200).send({ filteredByAuthor });
+        }
       })
       .catch(err => {
         next(err);
