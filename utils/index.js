@@ -1,26 +1,24 @@
 const convertDate = date => new Date(date);
 
-const formattedArticles = articles =>
-  articles.map(article => ({
-    title: article.title,
-    body: article.body,
-    topic: article.topic,
-    author: article.author,
-    created_at: convertDate(article.created_at)
-  }));
+const formattedArticles = articles => articles.map(article => ({
+  title: article.title,
+  body: article.body,
+  topic: article.topic,
+  author: article.author,
+  created_at: convertDate(article.created_at),
+}));
 
-const getArticleIds = articlesRows =>
-  articlesRows.map(articleRow => {
-    const articleObj = {
-      title: articleRow.title,
-      article_id: articleRow.article_id
-    };
-    return articleObj;
-  });
+const getArticleIds = articlesRows => articlesRows.map((articleRow) => {
+  const articleObj = {
+    title: articleRow.title,
+    article_id: articleRow.article_id,
+  };
+  return articleObj;
+});
 
 const getArticleId = (title, articleIdList) => {
   const article = articleIdList.filter(
-    articleRow => articleRow.title === title
+    articleRow => articleRow.title === title,
   );
   if (article.length > 0) {
     return article[0].article_id;
@@ -30,7 +28,7 @@ const getArticleId = (title, articleIdList) => {
 
 const correctComments = (comments, articlesRows) => {
   const formattedComments = [];
-  comments.forEach(comment => {
+  comments.forEach((comment) => {
     const article_id = getArticleId(comment.belongs_to, articlesRows);
     if (article_id !== -1) {
       const newComment = {};
@@ -48,70 +46,70 @@ const correctComments = (comments, articlesRows) => {
   return formattedComments;
 };
 
-const authors = ["butter_bridge", "icellusedkars", "rogersop"];
-const topics = ["mitch", "cats"];
+const authors = ['butter_bridge', 'icellusedkars', 'rogersop'];
+const topics = ['mitch', 'cats'];
 
 const columns = [
-  "article_id",
-  "title",
-  "body",
-  "votes",
-  "topic",
-  "author",
-  "created_at"
+  'article_id',
+  'title',
+  'body',
+  'votes',
+  'topic',
+  'author',
+  'created_at',
 ];
 
-const correctQuerySortBy = sort_by => {
-  if (sort_by === undefined) return "fine";
+const correctQuerySortBy = (sort_by) => {
+  if (sort_by === undefined) return 'fine';
   if (columns.includes(sort_by)) {
-    return "fine";
+    return 'fine';
   }
-  return "err";
+  return 'err';
 };
 
-const correctQueryOrder = order => {
-  if (order === undefined) return "fine";
-  if (order === "asc" || order === "desc") {
-    return "fine";
+const correctQueryOrder = (order) => {
+  if (order === undefined) return 'fine';
+  if (order === 'asc' || order === 'desc') {
+    return 'fine';
   }
-  return "err";
+  return 'err';
 };
 
-const validatePost = body => {
-  const articleKeys = ["title", "body", "votes", "topic", "author"];
+const validatePost = (body) => {
+  const articleKeys = ['title', 'body', 'votes', 'topic', 'author'];
   const keys = Object.keys(body);
-  if (articleKeys.length !== keys.length) return "err";
+  if (articleKeys.length !== keys.length) return 'err';
   const orderedArticleKeys = articleKeys.sort();
   const orderedKeys = keys.sort();
   for (let i = 0; i < orderedArticleKeys.length; i++) {
     if (orderedArticleKeys[i] !== orderedKeys[i]) {
-      return "err";
+      return 'err';
     }
-    return "fine";
+    return 'fine';
   }
 };
 
-const validateId = id => {
+const validateId = (id) => {
   if (!isNaN(id.article_id)) {
     return true;
   }
   return false;
 };
 
-const formatVotes = body => {
+const formatVotes = (body) => {
   const bodArr = Object.keys(body);
 
-  if (bodArr[0] !== "incVotes") return false;
+  if (bodArr[0] !== 'incVotes') return false;
   if (isNaN(body.incVotes)) return false;
   if (bodArr.length !== 1) return false;
 
   return body.incVotes;
 };
 
-const formatArticleQuery = query => {
+const formatArticleQuery = (query) => {
   if (
-    (authors.includes(query.author) || query.author === undefined) &&
-    (topics.includes(query.topic) || query.topic === undefined)
+    (authors.includes(query.author) || query.author === undefined)
+    && (topics.includes(query.topic) || query.topic === undefined)
   ) {
     const obj = {};
     if (query.author !== undefined) obj.author = query.author;
@@ -119,7 +117,7 @@ const formatArticleQuery = query => {
 
     return obj;
   }
-  return "err";
+  return 'err';
 };
 
 const topicAndAuthorHandler = (articles, author, topic) => {
@@ -169,5 +167,5 @@ module.exports = {
   validatePost,
   validateId,
   formatVotes,
-  topicAndAuthorHandler
+  topicAndAuthorHandler,
 };
