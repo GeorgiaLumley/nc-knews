@@ -1,6 +1,5 @@
 const { getTopics, addNewTopic } = require('../models/topic');
 
-
 exports.sendTopics = (req, res, next) => {
   getTopics()
     .then((topics) => {
@@ -17,12 +16,13 @@ exports.postTopic = (req, res, next) => {
       if (topic.slug === undefined || topic.description === undefined) {
         return Promise.reject({ status: 400, msg: 'Bad Request' });
       }
-      const slug = getTopics();
-      for (let i = 0; i < slug.length; i++) {
-        if (slug[i] === req.body.slug) return Promise.reject({ status: 422, msg: 'Unprocessable Entity' });
-      }
+      getTopics().then((slug) => {
+        for (let i = 0; i < slug.length; i++) {
+          if (slug[i] === req.body.slug) return Promise.reject({ status: 422, msg: 'Unprocessable Entity' });
+        }
 
-      res.status(201).send({ topic });
+        res.status(201).send({ topic });
+      });
     })
     .catch((err) => {
       next(err);

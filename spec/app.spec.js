@@ -70,6 +70,19 @@ describe('/', () => {
           expect(body.topic.slug).to.equal(topicToAdd.slug);
         });
     });
+    it.only('POST status:201, adds new topic', () => {
+      const topicToAdd = {
+        slug: 'testing',
+        description: 'for testing',
+      };
+      return request
+        .post('/api/topics')
+        .send(topicToAdd)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.topic.slug).to.equal(topicToAdd.slug);
+        });
+    });
   });
 
   describe('/articles', () => {
@@ -570,7 +583,7 @@ describe('/', () => {
         });
     });
 
-    it.only('GET states 200 comments by the same author', () => request
+    it('GET status 200 comments by the same author', () => request
       .get('/api/comments?author=icellusedkars')
       .expect(200)
       .then((res) => {
