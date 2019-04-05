@@ -11,3 +11,7 @@ exports.decrementVotes = (comment_id, incVotes) => connection('comments')
 exports.removeComment = comment_id => connection('comments')
   .del()
   .where('comment_id', comment_id);
+
+exports.fetchComments = author => connection('comments')
+  .select('*')
+  .where('author', author);

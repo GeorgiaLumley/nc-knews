@@ -2,6 +2,7 @@ const {
   updateComment,
   decrementVotes,
   removeComment,
+  fetchComments,
 } = require('../models/comments');
 const { formatVotes, validateId } = require('../utils/index');
 
@@ -53,4 +54,13 @@ exports.deleteComment = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getComments = (req, res, next) => {
+  console.log(req.query);
+  const { author } = req.query;
+  fetchComments(author).then((comments) => {
+    console.log(comments);
+    res.status(200).send({ comments });
+  });
 };
