@@ -8,6 +8,7 @@ exports.up = function (knex, Promise) {
       .string('topic')
       .references('slug')
       .inTable('topics')
+      .onDelete('CASCADE')
       .notNullable();
     articleTable
       .string('author')
