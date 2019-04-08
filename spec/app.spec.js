@@ -70,7 +70,7 @@ describe('/', () => {
           expect(body.topic.slug).to.equal(topicToAdd.slug);
         });
     });
-    it.only('POST status:201, adds new topic', () => {
+    it('POST status:201, adds new topic', () => {
       const topicToAdd = {
         slug: 'testing',
         description: 'for testing',
@@ -142,7 +142,7 @@ describe('/', () => {
       .then((res) => {
         expect(res.body.filtered).to.have.length(2);
       }));
-    it('GET status:200 serves up default sort_by of articles in ascending order by date', () => request
+    it.only('GET status:200 serves up default order of articles in ascending order by date', () => request
       .get('/api/articles')
       .expect(200)
       .then((res) => {
@@ -150,19 +150,40 @@ describe('/', () => {
           'Living in the shadow of a great man',
         );
       }));
-    it('GET status:200 serves up sort_by of articles by title in descending order by title', () => request
+    it.only('GET status:200 serves up  order of articles in descending order by date', () => request
+      .get('/api/articles?order=asc')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].title).to.eql('Moustache');
+      }));
+    it.only('GET status:200 serves up sort_by of articles by title in descending order by title', () => request
+      .get('/api/articles?sort_by=title&&order=asc')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].title).to.eql('A');
+      }));
+    it.only('GET status:200 serves up sort_by of articles by title in descending order by title', () => request
       .get('/api/articles?sort_by=title')
       .expect(200)
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Z');
       }));
-    it('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
+
+    it.only('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
       .get('/api/articles?sort_by=created_at&&order=asc')
       .expect(200)
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Moustache');
       }));
-    it('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
+    it.only('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
+      .get('/api/articles?sort_by=created_at')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].title).to.eql(
+          'Living in the shadow of a great man',
+        );
+      }));
+    it.only('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
       .get('/api/articles?order=asc')
       .expect(200)
       .then((res) => {
@@ -391,7 +412,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.eql('Bad Request');
         }));
-      it("sort_by a author that doesn't exist", () => request
+      it.only("sort_by a author that doesn't exist", () => request
         .get('/api/articles?author=cats')
         .expect(400)
         .then((res) => {
@@ -515,7 +536,7 @@ describe('/', () => {
               .send(commentToAdd)
               .expect(422)
               .then((res) => {
-                expect(res.body.msg).to.eql('UNPROCESSABLE ENTITY');
+                expect(res.body.msg).to.eql('Unprocessable Entity');
               });
           });
         });
@@ -591,6 +612,6 @@ describe('/', () => {
         expect(res.body.comments[0].author).to.eql('icellusedkars');
       }));
 
-    it.only('GET status 204 delete topic', () => request.delete('/api/topics/mitch').expect(204));
+    it('GET status 204 delete topic', () => request.delete('/api/topics/mitch').expect(204));
   });
 });
