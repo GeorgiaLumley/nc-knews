@@ -121,6 +121,7 @@ const formatArticleQuery = (query) => {
 };
 
 const topicAndAuthorHandler = (articles, author, topic) => {
+  console.log(articles, author, topic);
   if (topic === undefined && author !== undefined) {
     const filteredAuthor = [];
     for (let i = 0; i < articles.length; i++) {

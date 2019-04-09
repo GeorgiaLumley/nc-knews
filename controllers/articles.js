@@ -29,12 +29,14 @@ exports.sendArticles = (req, res, next) => {
   } else {
     getArticles(sort_by, order, limit)
       .then((articles) => {
+        console.log('hey', articles);
         if (req.query.author === undefined && req.query.topic === undefined) {
           res.status(200).send({ articles });
         } else {
           const author = req.query.author;
           const topic = req.query.topic;
           const filtered = topicAndAuthorHandler(articles, author, topic);
+          console.log('hi', filtered);
           if (filtered.length === 0) {
             next({ msg: 'Bad Request' });
           }
@@ -109,14 +111,18 @@ exports.sendArticleComments = (req, res, next) => {
 exports.postNewComment = (req, res, next) => {
   const newComment = req.body;
   const { id } = req.params;
+  console.log(newComment);
   getUserByUsername(req.body.author).then((res) => {
     if (res.length === 0) {
       next({ status: 422, msg: 'UNPROCESSABLE ENTITY' });
     }
   });
 
-  addNewComment(newComment, id)
+  newComment.article_id = req.params.article_id;
+  console.log(newComment);
+  addNewComment(newComment)
     .then((comment) => {
+      console.log(comment);
       res.status(201).send({ comment });
     })
     .catch((err) => {

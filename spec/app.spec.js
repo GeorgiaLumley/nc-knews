@@ -142,7 +142,7 @@ describe('/', () => {
       .then((res) => {
         expect(res.body.filtered).to.have.length(2);
       }));
-    it.only('GET status:200 serves up default order of articles in ascending order by date', () => request
+    it('GET status:200 serves up default order of articles in ascending order by date', () => request
       .get('/api/articles')
       .expect(200)
       .then((res) => {
@@ -150,32 +150,32 @@ describe('/', () => {
           'Living in the shadow of a great man',
         );
       }));
-    it.only('GET status:200 serves up  order of articles in descending order by date', () => request
+    it('GET status:200 serves up  order of articles in descending order by date', () => request
       .get('/api/articles?order=asc')
       .expect(200)
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Moustache');
       }));
-    it.only('GET status:200 serves up sort_by of articles by title in descending order by title', () => request
+    it('GET status:200 serves up sort_by of articles by title in descending order by title', () => request
       .get('/api/articles?sort_by=title&&order=asc')
       .expect(200)
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('A');
       }));
-    it.only('GET status:200 serves up sort_by of articles by title in descending order by title', () => request
+    it('GET status:200 serves up sort_by of articles by title in descending order by title', () => request
       .get('/api/articles?sort_by=title')
       .expect(200)
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Z');
       }));
 
-    it.only('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
+    it('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
       .get('/api/articles?sort_by=created_at&&order=asc')
       .expect(200)
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Moustache');
       }));
-    it.only('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
+    it('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
       .get('/api/articles?sort_by=created_at')
       .expect(200)
       .then((res) => {
@@ -183,11 +183,19 @@ describe('/', () => {
           'Living in the shadow of a great man',
         );
       }));
-    it.only('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
+    it('GET status:200 serves up sort_by of articles  by title in descending order by date', () => request
       .get('/api/articles?order=asc')
       .expect(200)
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Moustache');
+      }));
+    it('GET status:200 serves up sort_by of articles by title in descending order by date', () => request
+      .get('/api/articles?order=asc&&topic=rogersop&&sort_by=created_at')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.filtered[0].title).to.eql(
+          'UNCOVERED: catspiracy to bring down democracy',
+        );
       }));
     it('QUERY status:200 sets a default limit of 10', () => request
       .get('/api/articles')
@@ -296,7 +304,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.comments).to.have.length(5);
         }));
-      it('POST status:201, add new comment', () => {
+      it.only('POST status:201, add new comment', () => {
         const commentToAdd = {
           author: 'icellusedkars',
           body: 'this is a test',
@@ -307,6 +315,7 @@ describe('/', () => {
           .expect(201)
           .then((res) => {
             expect(res.body.comment[0].title).to.equal(commentToAdd.title);
+            expect(res.body.comment[0].article_id).to.eql(9);
           });
       });
     });
@@ -412,7 +421,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.eql('Bad Request');
         }));
-      it.only("sort_by a author that doesn't exist", () => request
+      it("sort_by a author that doesn't exist", () => request
         .get('/api/articles?author=cats')
         .expect(400)
         .then((res) => {
