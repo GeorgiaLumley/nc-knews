@@ -38,7 +38,6 @@ exports.deleteTopic = (req, res, next) => {
 
   deleteSingleTopic(topic_id)
     .then((topicDeleted) => {
-      console.log('hi', topicDeleted);
       if (topicDeleted === 0) {
         return Promise.reject({ status: 400, msg: 'Bad Request' });
       }

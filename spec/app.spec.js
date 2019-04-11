@@ -114,7 +114,6 @@ describe('/', () => {
         .send(articlesToAdd)
         .expect(201)
         .then(({ body }) => {
-          console.log(body);
           expect(body.article[0].title).to.equal(articlesToAdd.title);
         });
     });
@@ -189,8 +188,8 @@ describe('/', () => {
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Moustache');
       }));
-    it('GET status:200 serves up sort_by of articles by title in descending order by date', () => request
-      .get('/api/articles?order=asc&&topic=rogersop&&sort_by=created_at')
+    it.only('GET status:200 serves up sort_by of articles by title in descending order by date', () => request
+      .get('/api/articles?order=asc&&topic=cats&&sort_by=created_at')
       .expect(200)
       .then((res) => {
         expect(res.body.filtered[0].title).to.eql(
@@ -249,7 +248,6 @@ describe('/', () => {
           .send(incVotes)
           .expect(200)
           .then((res) => {
-            console.log(res.body);
             expect(res.body.updateVotes.votes).to.eql(-1);
           });
       });
@@ -304,7 +302,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.comments).to.have.length(5);
         }));
-      it.only('POST status:201, add new comment', () => {
+      it('POST status:201, add new comment', () => {
         const commentToAdd = {
           author: 'icellusedkars',
           body: 'this is a test',
@@ -617,7 +615,6 @@ describe('/', () => {
       .get('/api/comments?author=icellusedkars')
       .expect(200)
       .then((res) => {
-        console.log(res.body);
         expect(res.body.comments[0].author).to.eql('icellusedkars');
       }));
 
