@@ -188,13 +188,27 @@ describe('/', () => {
       .then((res) => {
         expect(res.body.articles[0].title).to.eql('Moustache');
       }));
-    it.only('GET status:200 serves up sort_by of articles by title in descending order by date', () => request
+    it('GET status:200 serves up sort_by of articles by title in descending order by date', () => request
       .get('/api/articles?order=asc&&topic=cats&&sort_by=created_at')
       .expect(200)
       .then((res) => {
         expect(res.body.filtered[0].title).to.eql(
           'UNCOVERED: catspiracy to bring down democracy',
         );
+      }));
+    it('GET status:200 serves up sort_by of articles by title in by date', () => request
+      .get('/api/articles?topic=cats&&sort_by=created_at')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.filtered[0].title).to.eql(
+          'UNCOVERED: catspiracy to bring down democracy',
+        );
+      }));
+    it('GET status:200 serves up sort_by of articles by title in by date', () => request
+      .get('/api/articles?topic=mitch&&sort_by=created_at&&order=asc')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.filtered[0].title).to.eql('Moustache');
       }));
     it('QUERY status:200 sets a default limit of 10', () => request
       .get('/api/articles')

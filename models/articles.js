@@ -39,3 +39,9 @@ exports.decrementVotes = (article_id, incVote) => connection('articles')
   .where('article_id', article_id)
   .decrement('votes', incVote)
   .returning('*');
+
+exports.getArticlesWithTopic = (topic, order, sort_by) => connection('articles')
+  .where('topic', topic)
+  .returning('*')
+  .limit(10)
+  .orderBy(sort_by || 'created_at', order || 'desc');

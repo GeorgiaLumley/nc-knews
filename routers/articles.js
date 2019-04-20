@@ -7,6 +7,7 @@ const {
   sendArticleComments,
   postNewComment,
   updateArticleVotes,
+  sendArticlesByTopic,
 } = require('../controllers/articles');
 const { methodNotAllowed } = require('../controllers/err');
 
@@ -15,6 +16,8 @@ articlesRouter
   .get(sendArticles)
   .post(postArticles)
   .all(methodNotAllowed);
+
+articlesRouter.route('/topic').get(sendArticlesByTopic);
 
 articlesRouter
   .route('/:article_id')

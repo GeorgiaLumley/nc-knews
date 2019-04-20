@@ -7,9 +7,9 @@ const {
   addNewComment,
   updateVotes,
   decrementVotes,
+  getArticlesWithTopic,
 } = require('../models/articles');
 const {
-  formatArticleQuery,
   correctQuerySortBy,
   correctQueryOrder,
   validatePost,
@@ -49,6 +49,17 @@ exports.sendArticles = (req, res, next) => {
         next(err);
       });
   }
+};
+
+exports.sendArticlesByTopic = (req, res, next) => {
+  const { topic, order, sort_by } = req.query;
+  getArticlesWithTopic(topic, order, sort_by)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.postArticles = (req, res, next) => {
